@@ -4,15 +4,29 @@ import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:videochatapp/twilio/join_room.dart';
 
 const appId = "e063bba417e54cb8a1435641ef4b4785";
 const token =
-    "006e063bba417e54cb8a1435641ef4b4785IABCKHzeTzljr0ofpuN8KOaSjOAkAzWu8qOUobYqEGu7Egx+f9gAAAAAEACvrbVsYvM6YgEAAQBi8zpi";
+    "006e063bba417e54cb8a1435641ef4b4785IAAbKhHLOkXawgiGOR3XjNfaYa6dxAFMaw0/b9skTSaqFgx+f9gAAAAAEAAg4mLW4SZEYgEAAQDhJkRi";
 const channelName = "test";
-void main() => runApp(MaterialApp(home: MyApp()));
+void main() {
+  // Debug.enabled = true;
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(<DeviceOrientation>[
+    DeviceOrientation.landscapeRight,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  runApp(const MaterialApp(home: MyApp()));
+}
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -93,8 +107,19 @@ class _MyAppState extends State<MyApp> {
   // Display remote user's video
   Widget _remoteVideo() {
     if (_remoteUid != null) {
-      return RtcRemoteView.SurfaceView(
-          channelId: channelName, uid: _remoteUid!);
+      return SizedBox(
+        width: 400,
+        height: 200,
+        child: Row(children: [
+          Expanded(
+            child: RtcRemoteView.SurfaceView(
+                channelId: channelName, uid: _remoteUid!),
+          ),
+          Expanded(
+              child: RtcRemoteView.SurfaceView(
+                  channelId: channelName, uid: _remoteUid!))
+        ]),
+      );
     } else {
       return const Text(
         'Please wait for remote user to join',
